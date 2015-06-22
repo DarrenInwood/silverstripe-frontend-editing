@@ -30,7 +30,20 @@ class FrontendEditableExtension extends DataExtension {
 			$this->owner->CreatorID = Member::currentUserID();
 		}
 
-		$fields->addFieldToTab('Root.Main', new DropdownField('CreatorID', 'Owner', Member::get()->map('ID','Email')), 'Content');
+		// This field uses up all the memory so replace it with a autocomplete field
+		if ( $fields->dataFieldByName('CreatorID') ) {
+			$memberAutoCompleteField = AutoCompleteField::create(
+				'CreatorID',
+				'Owner',
+				null,
+				null,
+				null,
+				'Member',
+				array('FirstName', 'Surname', 'Email')
+			);
+			$fields->replaceField('CreatorID', $memberAutoCompleteField);
+		}
+
 	}
 
 	/**
